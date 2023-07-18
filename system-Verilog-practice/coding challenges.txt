@@ -1,0 +1,71 @@
+1. Challenge: Array Operations Write a SystemVerilog code that performs the following operations on an array of integers:
+	• Initialize the array with values [1, 2, 3, 4, 5].
+	• Print the sum of all elements in the array.
+	• Double the value of each element in the array.
+	• Print the modified array.
+2. Challenge: Queue Manipulation Write a SystemVerilog code that demonstrates the usage of a queue:
+	• Declare a queue of integers.
+	• Enqueue values 1, 2, 3 into the queue.
+	• Dequeue two values from the queue.
+	• Enqueue values 4, 5 into the queue.
+	• Print the contents of the queue.
+3. Challenge: Associative Array Lookup Write a SystemVerilog code that uses an associative array to perform a lookup operation:
+	• Declare an associative array with string keys and integer values.
+	• Initialize the array with keys "apple", "banana", "cherry" and corresponding values 1, 2, 3.
+	• Perform a lookup for the key "banana" and print its corresponding value.
+4. Challenge: Dynamic Array Insertion Write a SystemVerilog code that demonstrates dynamic array insertion:
+	• Declare a dynamic array of integers.
+	• Insert values 1, 2, 3 into the array at different indices.
+	• Print the array after each insertion.
+5. Challenge: Queue Size Limit Write a SystemVerilog code that demonstrates the size limit of a queue:
+	• Declare a queue of integers with a maximum size of 3.
+	• Enqueue 4 values into the queue.
+	• Print the contents of the queue.
+6. Challenge: Associative Array Iteration Write a SystemVerilog code that iterates over the elements of an associative array:
+	• Declare an associative array with string keys and integer values.
+	• Initialize the array with some key-value pairs.
+	• Iterate over the elements of the array and print each key-value pair.
+7. Challenge: Dynamic Array Sorting Write a SystemVerilog code that sorts a dynamic array of integers in ascending order:
+	• Declare a dynamic array of integers.
+	• Initialize the array with random integer values.
+	• Sort the array using a sorting algorithm of your choice.
+	• Print the sorted array.
+8. Challenge: Queue FIFO Behavior Write a SystemVerilog code that demonstrates the FIFO (First-In-First-Out) behavior of a queue:
+	• Declare a queue of integers.
+	• Enqueue values 1, 2, 3 into the queue.
+	• Dequeue and print the values one by one from the queue.
+9. Challenge: Associative Array Manipulation Write a SystemVerilog code that demonstrates various operations on an associative array:
+	• Declare an associative array with string keys and integer values.
+	• Initialize the array with some key-value pairs.
+	• Add a new key-value pair to the array.
+	• Delete a key-value pair from the array.
+	• Modify the value of an existing key in the array.
+	• Print the updated array.
+10. Challenge: Array Searching and Indexing Write a SystemVerilog code that performs searching and indexing operations on an array of strings:
+	• Declare an array of strings.
+	• Initialize the array with some random string values.
+	• Perform a search for a specific string in the array and print its index if found.
+	• Print the value at a specific index in the array.
+
+
+==================================
+
+Write a SystemVerilog code to declare an array of 10 integers and initialize it with values 1 to 10.
+
+Implement a module that performs a bubble sort algorithm on an input array of integers. Test it with a sample input.
+
+Create a dynamic queue in SystemVerilog and enqueue the values 5, 10, 15, and 20. Dequeue the elements and display them.
+
+Declare an associative array of string keys and integer values. Add "apple" with a value of 5, "banana" with a value of 10, and "orange" with a value of 15. Print the values associated with "apple" and "orange".
+
+Write a function that takes an array of integers as input and returns the sum of all even numbers in the array.
+
+Implement a module that converts a binary number represented as an array of bits to its decimal equivalent.
+
+Create a module that counts the number of occurrences of each character in a given string and stores the counts in an associative array.
+
+Implement a circular buffer using a fixed-size array. Include functions for enqueueing and dequeueing elements.
+
+Write a module that finds the maximum and minimum values in an array of integers and outputs them.
+
+Create a module that checks if a given string is a palindrome or not. Test it with different input strings.
