@@ -23,6 +23,16 @@ Design and implement a Universal Register File (URF) module that supports both r
 - read_data: Output signal to provide the data read from the specified address.
 - busy: Output signal to indicate whether the URF is busy with a read or write operation.
 
+## Explanation of URF Logic:
+
+- The URF is a block of registers where each register can store data of width DATA_WIDTH.
+- The number of registers in the URF is determined by the DEPTH parameter, allowing for a configurable number of storage locations.
+- The URF operates synchronously with the input clock (clk).
+- The asynchronous reset (rst) signal is used to reset the URF to its initial state, clearing all register contents.
+- To perform a read operation, the user provides the read address (read_addr). The URF outputs the data stored at the specified address on the read_data signal.
+- To perform a write operation, the user provides the write address (write_addr) and the data to be written (write_data). The write_enable signal is used to enable the write operation. When write_enable is asserted, the URF writes the provided data to the specified address.
+- The URF supports read and write operations on successive clock cycles, allowing for pipelined data processing.
+
 ## Testbench Module:
 
 Instantiate the URF module and generate test stimuli to perform read and write operations on the URF.

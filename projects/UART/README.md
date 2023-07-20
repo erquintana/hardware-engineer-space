@@ -1,38 +1,54 @@
-# Project Title: PCIe Endpoint Controller
+# Project Title: UART (Universal Asynchronous Receiver Transmitter) Communication Module
 
-## Description:
-Design a PCIe Endpoint Controller that functions as an endpoint device in a PCIe communication link. The PCIe Endpoint Controller will be responsible for handling PCIe transactions, managing data transfers between the host and the endpoint, and responding to configuration requests from the host.
+## Project Description:
+Design and implement a UART Communication module that supports asynchronous serial communication between two devices. The UART module should have configurable parameters for baud rate, data bits, stop bits, and parity. It should support both transmission (TX) and reception (RX) of data in a full-duplex manner.
 
-## Specifications:
+## Module Specifications:
 
-### PCIe Protocol:
-Implement PCIe 3.0 or PCIe 4.0 protocol for communication between the PCIe Endpoint Controller and the PCIe Root Complex (host).
+### UART Communication Module:
 
-### Configuration Space:
-Support PCIe Configuration Space and provide registers for configuration and control. Allow the host to read and write configuration registers to configure the endpoint.
+#### Parameters:
+- BAUD_RATE: Configurable baud rate for UART communication (e.g., 9600, 115200, etc.).
+- DATA_BITS: Number of data bits per UART frame (e.g., 8, 7, 6, etc.).
+- STOP_BITS: Number of stop bits per UART frame (e.g., 1, 1.5, 2, etc.).
+- PARITY: Type of parity (e.g., None, Odd, Even, etc.).
 
-### Data Transfer:
-Implement data transfer mechanisms such as Memory Read, Memory Write, and I/O Read/Write for efficient data exchange between the host and the endpoint.
+#### Inputs:
+- clk: Clock signal for synchronous operations.
+- rst: Asynchronous reset signal to reset the UART module to its initial state.
+- data_in: Input signal to provide data to be transmitted (TX) or received (RX).
+- tx_start: Input signal to initiate the transmission of data.
+- rx_start: Input signal to initiate the reception of data.
 
-### Completion Handling:
-Handle completion packets for PCIe transactions initiated by the host. Process completions for Read and Write transactions accordingly.
+#### Outputs:
+- data_out: Output signal to provide received data from the UART module (for RX).
+- tx_done: Output signal to indicate the completion of data transmission.
+- rx_done: Output signal to indicate the completion of data reception.
+- busy: Output signal to indicate whether the UART module is busy with a TX or RX operation.
 
-### Error Handling:
-Implement error handling mechanisms to manage errors such as Data Link Layer (DLL) errors and Transaction Layer Packet (TLP) errors.
+### Testbench Module:
 
-### Interrupt Handling:
-Support PCIe interrupts and provide a mechanism for the host to raise interrupts at the endpoint. Implement interrupt moderation if applicable.
+- Instantiate the UART module and generate test stimuli to perform data transmission and reception.
+- Verify the correctness of the transmitted and received data by comparing the expected results with the actual results obtained from the UART module.
+- Test different baud rates, data bits, stop bits, and parity configurations to ensure the UART module handles them correctly.
+- Check the behavior of the UART module under various conditions, such as transmitting and receiving continuous data, transmitting and receiving single data bytes, etc.
 
-### Power Management:
-Include support for PCIe power management features such as L0, L1, L2, and L3 power states.
+## Explanation of UART Communication Module Logic:
 
-### Clock and Reset Management:
-Implement proper clock and reset handling to ensure reliable and stable operation of the PCIe Endpoint Controller.
+- The UART module is designed to support asynchronous serial communication, allowing two devices to transmit and receive data in a full-duplex manner.
+- It can be configured with different parameters like baud rate, data bits, stop bits, and parity, providing flexibility to adapt to various communication settings.
+- When data needs to be transmitted, the UART module uses the tx_start signal to initiate the transmission process.
+- Similarly, the rx_start signal is used to initiate the reception process when data is expected to be received.
+- The UART module performs data transmission and reception based on the configured parameters and the data_in signal provided by the user.
+- After completing the transmission, the tx_done signal is asserted to indicate the end of data transmission.
+- Similarly, the rx_done signal is asserted to indicate the completion of data reception.
+- The busy signal indicates whether the UART module is currently engaged in a TX or RX operation, providing the user with status information.
 
-### Physical Layer (Optional):
-If desired, add support for the Physical Layer (PHY) to enable physical PCIe link establishment and communication.
+## Testbench Module:
 
-### Verification:
-Design comprehensive testbenches to verify the functionality and compliance of the PCIe Endpoint Controller with the PCIe specification.
+- The testbench module instantiates the UART module and generates test stimuli to emulate different communication scenarios.
+- It verifies the correctness of the transmitted and received data by comparing the expected data with the data received from the UART module.
+- Test cases are designed to cover various communication configurations, such as different baud rates, data bits, stop bits, and parity settings.
+- The testbench checks the UART module's behavior under different conditions, ensuring it functions correctly for both continuous data transmission and reception and single data byte transfer.
 
-Remember to thoroughly study the PCIe specification and guidelines while working on this project. The PCIe standard is complex and has specific requirements that need to be followed for successful integration with PCIe-based systems.
+Remember to thoroughly test the UART module with different test cases to ensure its functionality and robustness in handling various communication settings.
