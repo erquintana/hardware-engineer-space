@@ -1,46 +1,31 @@
-# UVM Register Model Framework (URF)
+# Project Title: Universal Register File (URF) with Read and Write Operations
 
-![UVM Logo](https://www.accellera.org/images/downloads/logo-uvm.png)
+## Project Description:
+Design and implement a Universal Register File (URF) module that supports both read and write operations. The URF should have a generic width and depth, making it flexible to use in different designs. It should support read and write operations on multiple clock cycles. The URF should also have error checking mechanisms to handle invalid read/write addresses.
 
-## Description
+## Module Specifications:
 
-The UVM Register Model Framework (URF) is a library that provides a reusable and configurable register model for UVM-based verification environments. It simplifies the creation and management of register models, allowing users to focus on higher-level verification tasks.
+### Universal Register File (URF) Module:
 
-## Key Features
+#### Parameters:
+- DATA_WIDTH: Width of each register in bits (e.g., 8, 16, 32, etc.).
+- DEPTH: Number of registers in the URF (e.g., 16, 32, 64, etc.).
 
-- **Register Abstraction:** URF provides an abstract representation of registers, fields, and register blocks. It allows easy modeling of the memory map and register configurations of the DUT (Design Under Test).
+#### Inputs:
+- clk: Clock signal for synchronous operations.
+- rst: Asynchronous reset signal to reset the URF to its initial state.
+- read_addr: Input signal to specify the address for read operations.
+- write_addr: Input signal to specify the address for write operations.
+- write_data: Input signal to provide data for write operations.
+- write_enable: Input signal to enable/disable write operations.
 
-- **Configurability:** URF is highly configurable, allowing users to customize register models based on the DUT's register specification.
+#### Outputs:
+- read_data: Output signal to provide the data read from the specified address.
+- busy: Output signal to indicate whether the URF is busy with a read or write operation.
 
-- **Register Access:** URF supports different access mechanisms, including direct register access, front-door access, and back-door access.
+## Testbench Module:
 
-- **Register Callbacks:** URF allows users to define callbacks for register read and write operations, enabling users to add custom behavior during register access.
+Instantiate the URF module and generate test stimuli to perform read and write operations on the URF.
+Verify the correctness of the read and write operations by comparing the expected results with the actual results obtained from the URF.
 
-- **Register Coverage:** URF provides built-in support for functional and code coverage of register accesses.
-
-- **Verification Sequences:** URF includes a set of pre-defined sequences for register verification, accelerating test development.
-
-## Getting Started
-
-To get started with the UVM Register Model Framework (URF) project, follow these steps:
-
-1. Clone the repository to your local machine.
-2. Review the URF library files and example testbenches in the project directory.
-3. Use a UVM-compliant simulation tool (e.g., Questa, VCS) to run the provided testbenches and verify the register models.
-4. Customize the register models and testbenches to fit your specific DUT register specification.
-5. Refer to the UVM User Guide for more information on using UVM in your verification environment.
-
-## License
-
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
-
-## Acknowledgments
-
-Special thanks to [Accellera](https://www.accellera.org/) for developing the UVM standard.
-
-## Contributing
-
-Contributions to this project are welcome. Feel free to submit pull requests or open issues if you encounter any problems or have suggestions for improvements.
-
----
-By [Your Name] - [Your Website/Blog] - [Your Email Address]
+You can start by defining the URF module with the specified inputs and outputs. Then, implement the read and write operations inside the URF module based on the provided addresses and data. Finally, create a testbench to verify the functionality of the URF module using different test cases.

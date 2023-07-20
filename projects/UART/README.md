@@ -1,47 +1,38 @@
-# UART (Universal Asynchronous Receiver-Transmitter)
+# Project Title: PCIe Endpoint Controller
 
-![UART Logo](https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Serial_COM_Port.jpg/800px-Serial_COM_Port.jpg)
+## Description:
+Design a PCIe Endpoint Controller that functions as an endpoint device in a PCIe communication link. The PCIe Endpoint Controller will be responsible for handling PCIe transactions, managing data transfers between the host and the endpoint, and responding to configuration requests from the host.
 
-## Description
+## Specifications:
 
-The UART (Universal Asynchronous Receiver-Transmitter) is a hardware IP block that provides serial communication between devices. It is widely used for communication between microcontrollers, sensors, and other embedded systems.
+### PCIe Protocol:
+Implement PCIe 3.0 or PCIe 4.0 protocol for communication between the PCIe Endpoint Controller and the PCIe Root Complex (host).
 
-## Key Features
+### Configuration Space:
+Support PCIe Configuration Space and provide registers for configuration and control. Allow the host to read and write configuration registers to configure the endpoint.
 
-- **Asynchronous Communication:** UART supports asynchronous serial communication, allowing devices with different clock frequencies to communicate.
+### Data Transfer:
+Implement data transfer mechanisms such as Memory Read, Memory Write, and I/O Read/Write for efficient data exchange between the host and the endpoint.
 
-- **Start and Stop Bits:** UART uses start and stop bits to frame each data byte, ensuring reliable data transmission.
+### Completion Handling:
+Handle completion packets for PCIe transactions initiated by the host. Process completions for Read and Write transactions accordingly.
 
-- **Baud Rate Configurability:** UART allows users to configure the baud rate for communication based on their requirements.
+### Error Handling:
+Implement error handling mechanisms to manage errors such as Data Link Layer (DLL) errors and Transaction Layer Packet (TLP) errors.
 
-- **Parity Bit Support:** UART supports optional parity bit generation and checking for error detection.
+### Interrupt Handling:
+Support PCIe interrupts and provide a mechanism for the host to raise interrupts at the endpoint. Implement interrupt moderation if applicable.
 
-- **Full Duplex:** UART enables simultaneous transmission and reception of data, providing full-duplex communication.
+### Power Management:
+Include support for PCIe power management features such as L0, L1, L2, and L3 power states.
 
-## Usage
+### Clock and Reset Management:
+Implement proper clock and reset handling to ensure reliable and stable operation of the PCIe Endpoint Controller.
 
-To use the UART IP block in your design, follow these steps:
+### Physical Layer (Optional):
+If desired, add support for the Physical Layer (PHY) to enable physical PCIe link establishment and communication.
 
-1. Integrate the UART IP block into your RTL design.
-2. Connect the UART's transmit and receive pins to the corresponding pins on the target device.
-3. Configure the UART's baud rate and other parameters as needed.
+### Verification:
+Design comprehensive testbenches to verify the functionality and compliance of the PCIe Endpoint Controller with the PCIe specification.
 
-## Verification
-
-To verify the functionality of the UART IP block, you can use a testbench and simulation tool to perform various test scenarios, including data transmission and reception at different baud rates, error handling, and boundary cases.
-
-## License
-
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
-
-## Acknowledgments
-
-Special thanks to all the contributors and developers who have contributed to the UART standard and related projects.
-
-## Contributing
-
-Contributions to this project are welcome. Feel free to submit pull requests or open issues if you encounter any problems or have suggestions for improvements.
-
----
-By [Your Name] - [Your Website/Blog] - [Your Email Address]
-
+Remember to thoroughly study the PCIe specification and guidelines while working on this project. The PCIe standard is complex and has specific requirements that need to be followed for successful integration with PCIe-based systems.
