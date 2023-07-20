@@ -1,4 +1,4 @@
-# Project Title: UART (Universal Asynchronous Receiver Transmitter) Communication Module
+## Project Title: UART (Universal Asynchronous Receiver Transmitter) Communication Module
 
 ## Project Description:
 Design and implement a UART Communication module that supports asynchronous serial communication between two devices. The UART module should have configurable parameters for baud rate, data bits, stop bits, and parity. It should support both transmission (TX) and reception (RX) of data in a full-duplex manner.
