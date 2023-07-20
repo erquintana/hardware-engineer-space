@@ -1,12 +1,12 @@
 class base1;
     rand bit [3:0] a,b,c,d;
 
-    constraint C1 {a != 10 };
-    constraint C2 {b > 5};
+    constraint C1 {a != 10;}
+    constraint C2 {b > 5;}
 
 endclass
 
-module tb
+module tb;
     base1 b1 = new();
     initial begin
         b1.rand_mode(0);
