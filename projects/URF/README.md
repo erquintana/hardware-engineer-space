@@ -2,7 +2,26 @@
 
 ## Project Description:
 Design and implement a Universal Register File (URF) module that supports both read and write operations. The URF should have a generic width and depth, making it flexible to use in different designs. It should support read and write operations on multiple clock cycles. The URF should also have error checking mechanisms to handle invalid read/write addresses.
-
+ +--------------------------------------------------+
+  |          Universal Register File (URF)          |
+  +--------------------------------------------------+
+  |                 URF Parameters                   |
+  |    +---------------------------------------+     |
+  |    |    DATA_WIDTH (e.g., 8, 16, 32)       |     |
+  |    |     DEPTH (e.g., 16, 32, 64)         |     |
+  |    +---------------------------------------+     |
+  |                                                  |
+  |          +-------------+  +-------------+        |
+  | Inputs:  |  clk        |  |  rst        |        |
+  |          |  read_addr  |  |  write_addr |        |
+  |          |  write_data |  |  write_enable|        |
+  |          +-------------+  +-------------+        |
+  |                                                  |
+  |       +---------------------------+             |
+  | Outputs: |  read_data                |           |
+  |          |  busy                     |           |
+  |          +---------------------------+           |
+  +--------------------------------------------------+
 ## Module Specifications:
 
 ### Universal Register File (URF) Module:
