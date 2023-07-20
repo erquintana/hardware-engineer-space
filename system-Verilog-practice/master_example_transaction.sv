@@ -11,6 +11,9 @@ class base_transaction;
     $display("[TR_prt] : clk = %0b  |  rst = %0b", this.clk, this.rst);
   endfunction
   
+  virtual function void test();
+    $display("PARENT CLASS TEST");
+  endfunction
 endclass
 
 class transaction extends base_transaction;
@@ -18,8 +21,9 @@ class transaction extends base_transaction;
   logic rst;
   rand logic rd_en;
   rand logic wr_en;
-  rand int rd_addr;
+  rand int rd_addr = 0;
   rand int wr_addr;
+  static int static_int; 
   
   //constraint wr_rd_constr {wr_en != rd_en;};
   constraint rd_addr_constr {rd_addr inside {[0:5]};};
@@ -39,6 +43,13 @@ class transaction extends base_transaction;
     $display("[TR] : clk = %0b  |  rst = %0b  |  rd_en = %0b  |  wr_en = %0b  |  rd_addr = %0d  |  wr_addr = %0d ", this.clk, this.rst, this.rd_en, this.wr_en, this.rd_addr, this.wr_addr);
   endfunction
   
+  static function void incr_static_int();
+    static_int++;
+  endfunction
+  
+  function void test();
+    $display("CHILD CLASS TEST");
+  endfunction
 endclass
 
 
@@ -126,5 +137,45 @@ module tb;
       tr_queue[i].randomize();
       tr_queue[i].print();      
     end
+  end
+  
+  // queue from parent handle
+  initial begin
+    base_transaction tr_queue[$];
+    $display("\n=========================================================");
+    $display("\tQUEUE OF TRANSACTION CLASS - PARENT");
+    
+    for(int i = 0; i < 5; i++) begin
+      transaction trq = new();
+      base_transaction tr_parent;
+      tr_parent = trq;
+      tr_queue.push_front(tr_parent);
+    end
+    
+    foreach(tr_queue[i]) begin
+      tr_queue[i].randomize();
+      tr_queue[i].print();      
+    end
+  end
+  
+  // static methods/properties
+  initial begin
+    transaction tr_static_test;
+    $display("\n=========================================================");
+    $display("\tSTATIC METHOS AND FUNCTIONS");
+    repeat(5) begin
+      $display("static propertie: %0d", tr_static_test.static_int); 
+      tr_static_test.incr_static_int();
+    end
+
+  end
+  
+  initial begin
+    base_transaction b = new();
+    transaction t1, t2;
+    $display("\n=========================================================");
+    $display("\tCAST OBJECTS");
+    //$cast(t1, b);
+    t1.test();
   end
 endmodule
