@@ -1,4 +1,4 @@
-# Project Title: Universal Register File (URF) with Read and Write Operations
+## Project Title: Universal Register File (URF) with Read and Write Operations
 
 ## Project Description:
 Design and implement a Universal Register File (URF) module that supports both read and write operations. The URF should have a generic width and depth, making it flexible to use in different designs. It should support read and write operations on multiple clock cycles. The URF should also have error checking mechanisms to handle invalid read/write addresses.
