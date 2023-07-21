@@ -18,6 +18,7 @@ Design and implement a Universal Register File (URF) module that supports both r
 - write_addr: Input signal to specify the address for write operations.
 - write_data: Input signal to provide data for write operations.
 - write_enable: Input signal to enable/disable write operations.
+- read_enable: Input signal to enable/disable read operations.
 
 #### Outputs:
 - read_data: Output signal to provide the data read from the specified address.
@@ -32,6 +33,7 @@ Design and implement a Universal Register File (URF) module that supports both r
 - To perform a read operation, the user provides the read address (read_addr). The URF outputs the data stored at the specified address on the read_data signal.
 - To perform a write operation, the user provides the write address (write_addr) and the data to be written (write_data). The write_enable signal is used to enable the write operation. When write_enable is asserted, the URF writes the provided data to the specified address.
 - The URF supports read and write operations on successive clock cycles, allowing for pipelined data processing.
+- write_enable & read_enable can't happen at the same time
 
 ## Testbench Module:
 
