@@ -1,10 +1,10 @@
 //------------------------------------------------------------------------------
-// Project: <Project Name>
-// File:    <File Name>.sv
+// Project: URF - Universal Regiter File
+// File:    universal_reg_array.sv
 // Author:  Esteban Rodríguez Quintana
 // Date:    <Date Created/Modified>
 //
-// Description: <Brief description of the purpose of this file>
+// Description: universal reg, memory like implemented with variable size
 //
 // Revision History:
 // - <Date>: <Version / Modification Description>
