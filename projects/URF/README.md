@@ -1,17 +1,23 @@
-## Project Title: Universal Register File (URF) with Read and Write Operations
+# Project Title: Universal Register File (URF) with Read and Write Operations
 
-## Project Description:
+NOTE: code is all implemented in the testbench for easy editing and running in EDA playground.
+Find executable code here: <https://www.edaplayground.com/x/iJsR>
+
+## Project Description
+
 Design and implement a Universal Register File (URF) module that supports both read and write operations. The URF should have a generic width and depth, making it flexible to use in different designs. It should support read and write operations on multiple clock cycles. The URF should also have error checking mechanisms to handle invalid read/write addresses.
 
-## Module Specifications:
+## Module Specifications
 
-### Universal Register File (URF) Module:
+### Universal Register File (URF) Module
 
-#### Parameters:
+#### Parameters
+
 - DATA_WIDTH: Width of each register in bits (e.g., 8, 16, 32, etc.).
 - DEPTH: Number of registers in the URF (e.g., 16, 32, 64, etc.).
 
-#### Inputs:
+#### Inputs
+
 - clk: Clock signal for synchronous operations.
 - rst: Asynchronous reset signal to reset the URF to its initial state.
 - read_addr: Input signal to specify the address for read operations.
@@ -20,11 +26,12 @@ Design and implement a Universal Register File (URF) module that supports both r
 - write_enable: Input signal to enable/disable write operations.
 - read_enable: Input signal to enable/disable read operations.
 
-#### Outputs:
+#### Outputs
+
 - read_data: Output signal to provide the data read from the specified address.
 - busy: Output signal to indicate whether the URF is busy with a read or write operation.
 
-## Explanation of URF Logic:
+## Explanation of URF Logic
 
 - The URF is a block of registers where each register can store data of width DATA_WIDTH.
 - The number of registers in the URF is determined by the DEPTH parameter, allowing for a configurable number of storage locations.
@@ -35,7 +42,7 @@ Design and implement a Universal Register File (URF) module that supports both r
 - The URF supports read and write operations on successive clock cycles, allowing for pipelined data processing.
 - write_enable & read_enable can't happen at the same time
 
-## Testbench Module:
+## Testbench Module
 
 Instantiate the URF module and generate test stimuli to perform read and write operations on the URF.
 Verify the correctness of the read and write operations by comparing the expected results with the actual results obtained from the URF.
