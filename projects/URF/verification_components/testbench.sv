@@ -97,15 +97,14 @@ endclass
 class generator;
 	int pkt_count = 1;
 	int tr_qty_to_generate;
-	event transaction_sent, transaction_received;
+	event transaction_ended;
 	transaction_item #(.DATA_WIDTH(DATA_WIDTH),.DEPTH(DEPTH)) tr_item;
 	mailbox g2d_mbx;
 
-	function new(mailbox g2d_mbx, event transaction_sent,event transaction_received);
+	function new(mailbox g2d_mbx, event transaction_ended);
 		$display("Time = %0t\t[GEN] : new generator instance", $time);
 		this.g2d_mbx = g2d_mbx;
-		this.transaction_sent = transaction_sent;
-		this.transaction_received = transaction_received;
+		this.transaction_ended = transaction_ended;
 		tr_item = new();
 	endfunction
 
@@ -120,7 +119,7 @@ class generator;
 			tr_item.print();
 			$display("Time = %0t\t[GEN] : item pushed to g2d mailbox", $time);
 			pkt_count++;
-			@(transaction_received);
+			@(transaction_ended);
 		end
 		
 
@@ -132,18 +131,17 @@ endclass
 // DRIVER
 //////////////////////////////////////////////////////////////////////////////////
 class driver;
-	event transaction_sent, transaction_received; 
+	event transaction_received; 
 	int pkt_count = 1;
 	virtual ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vinf;
 	mailbox g2d_mbx;
 	transaction_item #(.DATA_WIDTH(DATA_WIDTH),.DEPTH(DEPTH)) tr_item;
 
-	function new(virtual ura_if #(.DATA_WIDTH(DATA_WIDTH),.DEPTH(DEPTH)) vinf, mailbox g2d_mbx, event transaction_sent, event transaction_received);
+	function new(virtual ura_if #(.DATA_WIDTH(DATA_WIDTH),.DEPTH(DEPTH)) vinf, mailbox g2d_mbx, event transaction_received);
 		$display("Time = %0t\t[DRV] : new driver instance", $time);
 		this.vinf = vinf;
 		this.g2d_mbx = g2d_mbx;
 		this.tr_item = new();
-		this.transaction_sent = transaction_sent;
 		this.transaction_received = transaction_received;
 	endfunction
 
@@ -162,11 +160,10 @@ class driver;
 
 	task drive();
 	while(pkt_count <= 15) begin	
-		//wait(transaction_sent.triggered)
-		$display("============================================================================\nTime = %0t\t[DRV] : Receiving item from g2d mailbox ===> packet # %0d ]", $time, pkt_count);		
 		g2d_mbx.get(tr_item);	// getting data from generator
-		tr_item.print();
+		$display("============================================================================\nTime = %0t\t[DRV] : Receiving item from g2d mailbox ===> packet # %0d ]", $time, pkt_count);		
 		$display("Time = %0t\t[DRV] : Item received ===> packet # %0d", $time, pkt_count);
+		tr_item.print();
 		$display("Time = %0t\t[DRV] : Putting item into the interface", $time);	
 		@(posedge vinf.clk); 
 		vinf.DRIVER_MP.driver_cb.rst			<= 	tr_item.rst;
@@ -217,7 +214,7 @@ class agent_1;
 	virtual ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vinf;
 	mailbox g2d_mbx;
 	mailbox m2s_mbx;
-	event transaction_sent, transaction_received;
+	event transaction_g2d_ready;
 
 	// components:
 	generator gen;
@@ -232,8 +229,8 @@ class agent_1;
 		g2d_mbx = new();
 		m2s_mbx = new();
 
-		gen = new(g2d_mbx, transaction_sent, transaction_received);
-		drv = new(vinf, g2d_mbx, transaction_sent, transaction_received);
+		gen = new(g2d_mbx, transaction_g2d_ready);
+		drv = new(vinf, g2d_mbx, transaction_g2d_ready);
 		mon = new(vinf, m2s_mbx);
 	endfunction
 endclass
@@ -296,11 +293,6 @@ module testbench;
 
 	initial begin
 		//$display("================================\n\tTESTBENCH\n================================");
-		fork
-			env.agnt1.gen.tr_qty_to_generate = 15;
-			env.agnt1.gen.main();
-			env.agnt1.drv.drive();
-		join_any
 		#(MAX_EXEC_TIME_NS);
 		$finish;
 	end
