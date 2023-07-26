@@ -247,7 +247,7 @@ endclass
 class environment;
 
 	// communication:
-	virtual interface ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vinf;
+virtual interface ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vinf;
 	mailbox m2s_mbx;
 
 	// components:

@@ -78,7 +78,8 @@ class transaction_item #(DEPTH, DATA_WIDTH);
 	rand logic busy;
 
 	// data property constraints:
-	constraint wr_rd_c {read_en != write_en;}
+	constraint rd_c { (read_en != 0) -> write_en != read_en;}
+	constraint wr_c { (write_en != 0) -> write_en != read_en;}
 
 	// constructor:
 	function new();
@@ -95,7 +96,7 @@ endclass
 // GENERATOR
 //////////////////////////////////////////////////////////////////////////////////
 class generator;
-	int pkt_count = 1;
+	int tr_count = 1;
 	int tr_qty_to_generate;
 	event transaction_ended;
 	transaction_item #(.DATA_WIDTH(DATA_WIDTH),.DEPTH(DEPTH)) tr_item;
@@ -110,19 +111,13 @@ class generator;
 
 	// task to generate -N- of qty of transactions to be processed:
 	task main();
-		repeat (tr_qty_to_generate) begin
-			$display("============================================================================\nTime = %0t\t[GEN] : Sending item to g2d mailbox ===> packet # %0d]", $time, pkt_count);
-			// transaction randomization:
-			if (!tr_item.randomize()) $fatal(" [GEN] : failed to randomize transaction");
-			// putting transaction inn to mailbox to driver:
-			g2d_mbx.put(tr_item);
-			tr_item.print();
-			$display("Time = %0t\t[GEN] : item pushed to g2d mailbox", $time);
-			pkt_count++;
-			@(transaction_ended);
-		end
-		
-
+		$display("============================================================================\nTime = %0t\t[GEN] : Sending item to g2d mailbox ===> packet # %0d]", $time, tr_count);
+		// putting transaction inn to mailbox to driver:
+		g2d_mbx.put(tr_item);
+		tr_item.print();
+		$display("Time = %0t\t[GEN] : item pushed to g2d mailbox", $time);
+		tr_count++;
+		@(transaction_ended);
 	endtask
 
 endclass
@@ -132,7 +127,7 @@ endclass
 //////////////////////////////////////////////////////////////////////////////////
 class driver;
 	event transaction_received; 
-	int pkt_count = 1;
+	int tr_count = 1;
 	virtual ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vinf;
 	mailbox g2d_mbx;
 	transaction_item #(.DATA_WIDTH(DATA_WIDTH),.DEPTH(DEPTH)) tr_item;
@@ -158,11 +153,10 @@ class driver;
 		$display("Time = %0t\t[DRV] : reset ended", $time);
 	endtask
 
-	task drive();
-	while(pkt_count <= 15) begin	
+	task main();
 		g2d_mbx.get(tr_item);	// getting data from generator
-		$display("============================================================================\nTime = %0t\t[DRV] : Receiving item from g2d mailbox ===> packet # %0d ]", $time, pkt_count);		
-		$display("Time = %0t\t[DRV] : Item received ===> packet # %0d", $time, pkt_count);
+		$display("============================================================================\nTime = %0t\t[DRV] : Receiving item from g2d mailbox ===> packet # %0d ]", $time, tr_count);		
+		$display("Time = %0t\t[DRV] : Item received ===> packet # %0d", $time, tr_count);
 		tr_item.print();
 		$display("Time = %0t\t[DRV] : Putting item into the interface", $time);	
 		@(posedge vinf.clk); 
@@ -172,9 +166,8 @@ class driver;
 		vinf.DRIVER_MP.driver_cb.write_data		<=	tr_item.write_data;
 		vinf.DRIVER_MP.driver_cb.write_en		<=	tr_item.write_en;
 		vinf.DRIVER_MP.driver_cb.read_en		<=	tr_item.read_en;
-		pkt_count++;
+		tr_count++;
 		-> transaction_received;
-	end
 	endtask
 
 
@@ -209,7 +202,7 @@ endclass
 //////////////////////////////////////////////////////////////////////////////////
 // AGENT
 //////////////////////////////////////////////////////////////////////////////////
-class agent_1;
+class agent;
 	// module communication:
 	virtual ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vinf;
 	mailbox g2d_mbx;
@@ -222,7 +215,7 @@ class agent_1;
 	monitor mon;
 
 	function new(virtual ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vinf, mailbox m2s_mbx);
-		$display("Time = %0t\t[AGNT1] : new agent_1 instance", $time);
+		$display("Time = %0t\t[AGNT] : new agent instance", $time);
 		this.m2s_mbx = m2s_mbx;
 		this.vinf = vinf;
 
@@ -239,45 +232,163 @@ endclass
 // ENVIRONMENT
 //////////////////////////////////////////////////////////////////////////////////
 class environment;
-
 	// communication:
 	virtual interface ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vinf;
 	mailbox m2s_mbx;
 
 	// components:
 	scoreboard scb;
-	agent_1 agnt1;
+	agent agnt;
 
 	function new(virtual interface ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vinf);
-		$display("Time = %0t\t[ENV] : new env instance", $time);
+	$display("\nSETTING UP ENVIRONMENT");	
+	$display("Time = %0t\t[ENV] : new env instance", $time);
 		this.vinf = vinf;
 		m2s_mbx = new();
 		scb = new(m2s_mbx);
-		agnt1 = new(vinf, m2s_mbx);
+		agnt = new(vinf, m2s_mbx);
 	endfunction
 
 endclass
 
 //////////////////////////////////////////////////////////////////////////////////
-// TEST1
+// BASE_TEST
 //////////////////////////////////////////////////////////////////////////////////
-class test1;
+class base_test;
+	environment env;
+	string test_name;
+	virtual ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vinf;
+	transaction_item #(.DATA_WIDTH(DATA_WIDTH),.DEPTH(DEPTH)) tr_queue [$];
+	int tr_queue_size = 10;
 
+	function new(string test_name, virtual ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vinf);
+		this.vinf = vinf;
+		env = new(vinf);
+		this.test_name = test_name; 
+	endfunction
+
+	virtual task generate_tr_queue_data();
+	endtask
+	
+	task run();
+		$display("\n=================\tBEGINING %s TEST\t=================", test_name);
+		generate_tr_queue_data();
+
+		// beginning to sent data to generator and then to driver one by one from tr_queue:
+		while(tr_queue.size() > 0) begin
+			env.agnt.gen.tr_item = tr_queue.pop_front();
+			fork
+				env.agnt.gen.main();
+				env.agnt.drv.main();
+			join_any
+		end
+		$display("\n=================\t%s TEST FINISHED\t=================\n", test_name);
+	endtask
+	
 endclass
+
+//////////////////////////////////////////////////////////////////////////////////
+// RANDOM_TEST
+//////////////////////////////////////////////////////////////////////////////////
+class random_test extends base_test;
+	transaction_item #(.DATA_WIDTH(DATA_WIDTH),.DEPTH(DEPTH)) tr;
+	function new(string test_name, virtual ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vinf);
+		super.new(test_name, vinf);
+	endfunction
+
+	task generate_tr_queue_data();
+		int cnt = 1;
+		for (int i=0; i<tr_queue_size; ++i) begin
+			tr = new();
+			if(!tr.randomize()) $fatal("FATAL on randomization at random_test");
+			if(cnt == 1) begin
+				tr.rst = 1;
+			end else tr.rst = 0;
+			tr_queue.push_back(tr);
+			$display("-> Transaction # %0d pushed to queue", cnt);
+			cnt++;
+		end
+	endtask
+endclass
+
+//////////////////////////////////////////////////////////////////////////////////
+// WR_RD_TEST
+//////////////////////////////////////////////////////////////////////////////////
+class wr_rd_test extends base_test;
+	transaction_item #(.DATA_WIDTH(DATA_WIDTH),.DEPTH(DEPTH)) tr;
+	function new(string test_name, virtual ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vinf);
+		super.new(test_name, vinf);
+	endfunction
+
+	task generate_tr_queue_data();
+		int cnt = 1;
+		tr = new();
+		tr.rst = 1;
+		tr.write_en = 0;
+		tr.read_en = 0;
+		tr.read_addr = 0;
+		tr.write_addr = 0;
+		tr.write_data = 0;
+		tr_queue.push_back(tr);
+		$display("-> Transaction # %0d pushed to queue", cnt);
+		cnt++;
+		// writing in URA 0
+		tr = new();
+		tr.rst = 0;
+		tr.write_en = 1;
+		tr.read_en = 0;
+		tr.read_addr = 'x;
+		tr.write_addr = 0;
+		tr.write_data = 10;
+		tr_queue.push_back(tr);
+		$display("-> Transaction # %0d pushed to queue", cnt);
+		cnt++;
+		// reading from URA 0
+		tr = new();
+		tr.write_en = 0;
+		tr.read_en = 1;
+		tr.read_addr = 0;
+		tr.write_addr = 'x;
+		tr.write_data = 'x;
+		tr_queue.push_back(tr);
+		$display("-> Transaction # %0d pushed to queue", cnt);
+		cnt++;
+		// writing in URA 0
+		tr = new();
+		tr.rst = 0;
+		tr.write_en = 1;
+		tr.read_en = 0;
+		tr.read_addr = 'x;
+		tr.write_addr = 2;
+		tr.write_data = 20;
+		tr_queue.push_back(tr);
+		$display("-> Transaction # %0d pushed to queue", cnt);
+		cnt++;
+		// reading from URA 0
+		tr = new();
+		tr.write_en = 0;
+		tr.read_en = 1;
+		tr.read_addr = 2;
+		tr.write_addr = 'x;
+		tr.write_data = 'x;
+		tr_queue.push_back(tr);
+		$display("-> Transaction # %0d pushed to queue", cnt);
+		cnt++;
+	endtask
+endclass
+
 
 //////////////////////////////////////////////////////////////////////////////////
 // TESTBENCH
 //////////////////////////////////////////////////////////////////////////////////
 module testbench;
 	logic clk = 0;
-	logic rst = 0;
 	// free running clock:
-	always #5 clk = ~clk;
+	always #10 clk = ~clk;
 
-	// cominucation:
+	// Interface - test/DUT - cominucation:
 	ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) infc ();
-	// components:
-	environment env = new(infc);
+
 	assign infc.clk = clk;
 	universal_reg_array #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) DUT (
 			.clk(infc.clk),
@@ -290,9 +401,15 @@ module testbench;
 			.read_data(infc.read_data),
 			.busy(infc.busy)
 	);
-
+	
 	initial begin
-		//$display("================================\n\tTESTBENCH\n================================");
+		wr_rd_test wr_rd_T = new("WR + RD", infc);
+		random_test random_T = new("RANDOM", infc);
+		wr_rd_T.run();
+		//random_T.run();
+		
+	end
+	initial begin
 		#(MAX_EXEC_TIME_NS);
 		$finish;
 	end
