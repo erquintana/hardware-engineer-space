@@ -1,5 +1,4 @@
 `timescale 1ns / 1ps
-;
 
 parameter int DEPTH = 32;
 parameter int DATA_WIDTH = 8;
