@@ -1,7 +1,7 @@
 # Project Title: Universal Register File (URF) with Read and Write Operations
 
 NOTE: code is all implemented in the testbench for easy editing and running in EDA playground.
-Find executable code here: <https://www.edaplayground.com/x/iJsR>
+Find live executable code here: <https://www.edaplayground.com/x/iJsR>
 
 ## Project Description
 
