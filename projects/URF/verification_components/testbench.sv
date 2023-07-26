@@ -406,7 +406,7 @@ module testbench;
 		wr_rd_test wr_rd_T = new("WR + RD", infc);
 		random_test random_T = new("RANDOM", infc);
 		wr_rd_T.run();
-		//random_T.run();
+		random_T.run();
 		
 	end
 	initial begin
