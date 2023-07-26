@@ -32,8 +32,6 @@ interface ura_if #(DEPTH = 16, DATA_WIDTH = 32) ();
 		output write_data;
 		output write_en;
 		output read_en;
-		output read_data;
-		output busy;
 	endclocking
 
 	// If connected to an interface modport, a module sees only:
@@ -49,12 +47,6 @@ interface ura_if #(DEPTH = 16, DATA_WIDTH = 32) ();
 	// and synchronization.
 	clocking monitor_cb @(posedge clk);
 		default input #1 output #1;
-		input rst;
-		input read_addr;
-		input write_addr;
-		input write_data;
-		input write_en;
-		input read_en;
 		input read_data;
 		input busy;
 	endclocking
@@ -106,30 +98,32 @@ endclass
 class generator;
 	int pkt_count = 1;
 	int tr_qty_to_generate;
-	event transaction_ended;
+	event transaction_sent, transaction_received;
 	transaction_item #(.DATA_WIDTH(DATA_WIDTH),.DEPTH(DEPTH)) tr_item;
 	mailbox g2d_mbx;
 
-	function new(mailbox g2d_mbx, event transaction_ended);
+	function new(mailbox g2d_mbx, event transaction_sent,event transaction_received);
 		$display("Time = %0t\t[GEN] : new generator instance", $time);
 		this.g2d_mbx = g2d_mbx;
-		this.transaction_ended = transaction_ended;
+		this.transaction_sent = transaction_sent;
+		this.transaction_received = transaction_received;
 		tr_item = new();
 	endfunction
 
 	// task to generate -N- of qty of transactions to be processed:
 	task main();
 		repeat (tr_qty_to_generate) begin
-			$display("============================================================================\nTime = %0t\t[GEN] : Sending item to g2d mailbox ===> packet # %d]", $time, pkt_count);
+			$display("============================================================================\nTime = %0t\t[GEN] : Sending item to g2d mailbox ===> packet # %0d]", $time, pkt_count);
 			// transaction randomization:
 			if (!tr_item.randomize()) $fatal(" [GEN] : failed to randomize transaction");
 			// putting transaction inn to mailbox to driver:
 			g2d_mbx.put(tr_item);
 			tr_item.print();
-			$display("Time = %0t\t[GEN] : item already at g2d mailbox", $time);
+			$display("Time = %0t\t[GEN] : item pushed to g2d mailbox", $time);
 			pkt_count++;
-			-> transaction_ended;
+			@(transaction_received);
 		end
+		
 
 	endtask
 
@@ -139,16 +133,19 @@ endclass
 // DRIVER
 //////////////////////////////////////////////////////////////////////////////////
 class driver;
+	event transaction_sent, transaction_received; 
 	int pkt_count = 1;
-	virtual interface ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vinf;
+	virtual ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vinf;
 	mailbox g2d_mbx;
 	transaction_item #(.DATA_WIDTH(DATA_WIDTH),.DEPTH(DEPTH)) tr_item;
 
-	function new(virtual interface ura_if #(.DATA_WIDTH(DATA_WIDTH),.DEPTH(DEPTH)) vinf, mailbox g2d_mbx);
+	function new(virtual ura_if #(.DATA_WIDTH(DATA_WIDTH),.DEPTH(DEPTH)) vinf, mailbox g2d_mbx, event transaction_sent, event transaction_received);
 		$display("Time = %0t\t[DRV] : new driver instance", $time);
 		this.vinf = vinf;
 		this.g2d_mbx = g2d_mbx;
-		tr_item = new();
+		this.tr_item = new();
+		this.transaction_sent = transaction_sent;
+		this.transaction_received = transaction_received;
 	endfunction
 
 	task reset();
@@ -160,28 +157,28 @@ class driver;
 		vinf.DRIVER_MP.driver_cb.write_data <= 0;
 		vinf.DRIVER_MP.driver_cb.write_en	<= 0;
 		vinf.DRIVER_MP.driver_cb.read_en	<= 0;
-		vinf.DRIVER_MP.driver_cb.read_data	<= 0;
-		vinf.DRIVER_MP.driver_cb.busy		<= 0;
 		wait (!vinf.rst);
 		$display("Time = %0t\t[DRV] : reset ended", $time);
 	endtask
 
 	task drive();
+	while(pkt_count <= 15) begin	
+		//wait(transaction_sent.triggered)
 		$display("============================================================================\nTime = %0t\t[DRV] : Receiving item from g2d mailbox ===> packet # %0d ]", $time, pkt_count);		
 		g2d_mbx.get(tr_item);	// getting data from generator
 		tr_item.print();
-		//@(posedge vinf.clk); 
-		//vinf.DRIVER_MP.driver_cb.rst			<= 	tr_item.rst;
-		//vinf.DRIVER_MP.driver_cb.read_addr		<=	tr_item.read_addr;
-		//vinf.DRIVER_MP.driver_cb.write_addr		<=	tr_item.write_addr;
-		//vinf.DRIVER_MP.driver_cb.write_data		<=	tr_item.write_data;
-		//vinf.DRIVER_MP.driver_cb.write_en		<=	tr_item.write_en;
-		//vinf.DRIVER_MP.driver_cb.read_en		<=	tr_item.read_en;
-		//vinf.DRIVER_MP.driver_cb.read_data		<=	tr_item.read_data;
-		//vinf.DRIVER_MP.driver_cb.busy			<=	tr_item.busy;
-		$display("Time = %0t\t[DRV] : sent transaction to interface", $time);
-		tr_item.print();
+		$display("Time = %0t\t[DRV] : Item received ===> packet # %0d", $time, pkt_count);
+		$display("Time = %0t\t[DRV] : Putting item into the interface", $time);	
+		@(posedge vinf.clk); 
+		vinf.DRIVER_MP.driver_cb.rst			<= 	tr_item.rst;
+		vinf.DRIVER_MP.driver_cb.read_addr		<=	tr_item.read_addr;
+		vinf.DRIVER_MP.driver_cb.write_addr		<=	tr_item.write_addr;
+		vinf.DRIVER_MP.driver_cb.write_data		<=	tr_item.write_data;
+		vinf.DRIVER_MP.driver_cb.write_en		<=	tr_item.write_en;
+		vinf.DRIVER_MP.driver_cb.read_en		<=	tr_item.read_en;
 		pkt_count++;
+		-> transaction_received;
+	end
 	endtask
 
 
@@ -191,15 +188,10 @@ endclass
 // MONITOR
 //////////////////////////////////////////////////////////////////////////////////
 class monitor;
-	virtual interface ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vinf;
+	virtual ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vinf;
 	mailbox m2s_mbx;
 
-	function new(
-	virtual interface ura_if #(
-			.DATA_WIDTH(DATA_WIDTH),
-			.DEPTH(DEPTH)
-	) vinf,
-							 mailbox m2s_mbx);
+	function new(virtual ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vinf, mailbox m2s_mbx);
 		$display("Time = %0t\t[MON] : new monitor instance", $time);
 		this.m2s_mbx = m2s_mbx;
 		this.vinf = vinf;
@@ -223,17 +215,17 @@ endclass
 //////////////////////////////////////////////////////////////////////////////////
 class agent_1;
 	// module communication:
-	virtual interface ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vinf;
+	virtual ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vinf;
 	mailbox g2d_mbx;
 	mailbox m2s_mbx;
-	event transaction_ended;
+	event transaction_sent, transaction_received;
 
 	// components:
 	generator gen;
 	driver drv;
 	monitor mon;
 
-	function new(virtual ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vint, mailbox m2s_mbx);
+	function new(virtual ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) vinf, mailbox m2s_mbx);
 		$display("Time = %0t\t[AGNT1] : new agent_1 instance", $time);
 		this.m2s_mbx = m2s_mbx;
 		this.vinf = vinf;
@@ -241,8 +233,8 @@ class agent_1;
 		g2d_mbx = new();
 		m2s_mbx = new();
 
-		gen = new(g2d_mbx, transaction_ended);
-		drv = new(vinf, g2d_mbx);
+		gen = new(g2d_mbx, transaction_sent, transaction_received);
+		drv = new(vinf, g2d_mbx, transaction_sent, transaction_received);
 		mon = new(vinf, m2s_mbx);
 	endfunction
 endclass
@@ -288,9 +280,9 @@ module testbench;
 
 	// cominucation:
 	ura_if #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) infc ();
-
 	// components:
 	environment env = new(infc);
+	assign infc.clk = clk;
 	universal_reg_array #(.DATA_WIDTH(DATA_WIDTH), .DEPTH(DEPTH)) DUT (
 			.clk(infc.clk),
 			.rst(infc.rst),

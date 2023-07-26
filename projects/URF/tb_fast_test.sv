@@ -270,8 +270,8 @@ endclass
 // TESTBENCH
 //////////////////////////////////////////////////////////////////////////////////
 module testbench;
-    logic clk = 0;
-    logic rst = 0;
+	logic clk = 0;
+	logic rst = 0;
 	// free running clock:
 	always #5 clk = ~clk;
 
@@ -292,7 +292,7 @@ module testbench;
 			.busy(infc.busy)
 	);
 
-    initial begin
+	initial begin
 		//$display("================================\n\tTESTBENCH\n================================");
 		fork
 			env.agnt1.gen.tr_qty_to_generate = 3;
@@ -301,7 +301,7 @@ module testbench;
 		join_any
 		#(MAX_EXEC_TIME_NS);
 		$finish;
-    end
+	end
 
 	initial begin
 		$dumpfile("dump.vcd");
