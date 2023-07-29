@@ -1,4 +1,4 @@
-# Project Title: PCIe Endpoint Controller
+# Project Title: PCIe Endpoint Controller 
 
 ## Project Description:
 Design a PCIe Endpoint Controller that functions as an endpoint device in a PCIe communication link. The PCIe Endpoint Controller will be responsible for handling PCIe transactions, managing data transfers between the host and the endpoint, and responding to configuration requests from the host.
