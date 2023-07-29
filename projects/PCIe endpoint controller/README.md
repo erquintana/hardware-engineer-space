@@ -7,7 +7,7 @@ Design a PCIe Endpoint Controller that functions as an endpoint device in a PCIe
 
 ### PCIe Endpoint Controller Module:
 
-#### Parameters:
+#### Parts:
 - PCIe Protocol: Implement PCIe 3.0 or PCIe 4.0 protocol for communication between the PCIe Endpoint Controller and the PCIe Root Complex (host).
 - Configuration Space: Support PCIe Configuration Space and provide registers for configuration and control. Allow the host to read and write configuration registers to configure the endpoint.
 - Data Transfer: Implement data transfer mechanisms such as Memory Read, Memory Write, and I/O Read/Write for efficient data exchange between the host and the endpoint.
@@ -40,3 +40,24 @@ Generate test stimuli to emulate PCIe transactions and verify the correctness of
 Include scenarios to test error handling, interrupt handling, and power management features of the endpoint controller.
 
 Remember to refer to the PCIe specification and guidelines while working on this project. PCIe is a complex standard with specific requirements that must be followed for successful integration with PCIe-based systems.
+
+## Brief explanation of PCIE protocol:
+
+The PCIe (Peripheral Component Interconnect Express) is a high-speed, high-performance serial bus standard used for connecting various peripheral devices to a computer's motherboard. It serves as a replacement for older parallel bus standards like PCI and PCI-X, providing faster data transfer rates and improved scalability. To explain how PCIe works using the Pareto method, we will cover the following aspects:
+
+Overview of PCIe (80% of explanation):
+
+PCIe is a point-to-point serial bus architecture, meaning each device is connected directly to the host (root complex) through its own dedicated link.
+It uses differential signaling to transmit data, which reduces noise and improves reliability.
+PCIe supports multiple lanes, where each lane carries data independently, enabling higher bandwidth by adding more lanes.
+The key elements of PCIe are endpoints (devices), switches, and the root complex (host).
+Data Transfer Mechanism (15% of explanation):
+
+PCIe uses packets to transfer data. A transaction starts with a TLP (Transaction Layer Packet) containing the data payload, address, and control information.
+TLPs are forwarded from one device to another through switches until they reach the destination endpoint.
+The endpoint processes the TLP and sends back a completion packet to acknowledge the transaction.
+Link Configuration and Negotiation (5% of explanation):
+
+During link training and initialization, devices negotiate the number of lanes and link speed to establish a stable connection.
+Devices use the link training process to determine the best possible link configuration, ensuring optimal data transfer.
+In summary, PCIe is a high-speed serial bus standard that provides a scalable and efficient method for connecting peripheral devices to a computer's motherboard. It uses differential signaling and point-to-point links to achieve fast data transfer rates. PCIe transactions are packet-based, and devices negotiate link configurations to ensure reliable data transfer.
