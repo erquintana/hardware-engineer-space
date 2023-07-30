@@ -19,9 +19,9 @@ module scale_mux #(parameter width = 1) (
 );
     always_comb begin
         unique case (sel_a)
-           1'b1 : out <= in_a;
-           1'b0 : out <= in_b; 
-            default: out <= 'x;
+           1'b1 : out = in_a;
+           1'b0 : out = in_b; 
+            default: out = 'x;
         endcase
     end
 endmodule
