@@ -9,6 +9,8 @@
 // Revision History:
 // - <Date>: <Version / Modification Description>
 //
+// ********** This file includes all submodules in the same file for  **********
+// ********** easy testing using EDA playground platform.             **********
 //------------------------------------------------------------------------------
 
 typedef enum logic [0:2] {
