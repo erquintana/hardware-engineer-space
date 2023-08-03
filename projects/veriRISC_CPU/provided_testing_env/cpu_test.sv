@@ -3,7 +3,7 @@ module cpu_test;
 timeunit 1ns;
 timeprecision 100ps;
 
-import typedefs::*;
+//import typedefs::*;
 
 logic          rst_;
 logic [12*8:1] testfile;
@@ -35,7 +35,7 @@ assign fetch = ~count[3];
 assign alu_clk = ~(count == 4'hc);
 // end of clock generator
 
-cpu     cpu1    (
+veriRISC_CPU  cpu1    (
                 .halt  (halt  ),
                 .load_ir(load_ir),
                 .clk   (clk   ),     
@@ -67,7 +67,7 @@ cpu     cpu1    (
         $display ( "" );
         $display ( "Enter ' deposit test_number # ; run' \n" );
         test_number = 1;
-        $stop; // wait for test number
+        //$stop; // wait for test number
         
         if ( test_number > 3 )
           begin

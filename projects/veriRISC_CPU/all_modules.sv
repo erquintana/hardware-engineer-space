@@ -1,16 +1,3 @@
-//------------------------------------------------------------------------------
-// Project: Verifying the VeriRISC CPU
-// File:    veriRISC_CPU.sv
-// Author:  Esteban Rodríguez Quintana
-// Date:    <>
-//
-// Description: <>
-//
-// Revision History:
-// - <Date>: <Version / Modification Description>
-//
-//------------------------------------------------------------------------------
-
 typedef enum logic [0:2] {
   HLT,
   SKZ,
@@ -52,8 +39,6 @@ module register(
     input logic rst_,
     output logic [0:7] out
 );
-timeunit 1ns;
-timeprecision 1ns;
     always_ff @(posedge clk or negedge rst_) begin
         if(!rst_) begin
             out <= 0;
@@ -83,8 +68,6 @@ module scale_mux #(parameter width = 1) (
     input logic sel_a,
     output logic [0:width-1] out
 );
-timeunit 1ns;
-timeprecision 1ns;
     always_comb begin
         unique case (sel_a)
            1'b1 : out = in_a;
@@ -115,8 +98,7 @@ module counter(
     input logic rst_,
     output logic [0:4] count
 );
-timeunit 1ns;
-timeprecision 1ns;
+    
 always_ff @(posedge clk or negedge rst_) begin
     if(!rst_) begin
         count <= 0;
@@ -340,82 +322,3 @@ module control (
 endmodule
 
 
-//////////////////////////////////////////
-
-module veriRISC_CPU(
-                output logic halt  ,
-                output logic load_ir  ,
-                input  logic clk   ,
-                input  logic cntrl_clk  ,
-                input  logic alu_clk  ,
-                input  logic fetch ,
-                input  logic rst_
-);
-timeunit 1ns;
-timeprecision 100ps;
-logic    [7:0]   data_out, alu_out, accum_out, ir_out;
-logic    [4:0]   pc_addr, ir_addr, addr;
-opcode_t   opcode;
-logic load_ac, mem_rd, mem_wr, inc_pc, load_pc, zero;
-
-    register ir(
-        .data(data_out),
-        .enable(load_ir),
-        .clk(clk),
-        .rst_(rst_),
-        .out(ir_out));
-
-    assign opcode = opcode_t'(ir_out[7:5]);
-    assign ir_addr = ir_out[4:0];
-
-    register ac(
-        .data(alu_out),
-        .enable(load_ir),
-        .clk(clk),
-        .rst_(rst_),
-        .out(accum_out));
-
-    scale_mux #5 smx(
-        .in_a(pc_addr),
-        .in_b(ir_addr),
-        .sel_a(fetch),
-        .out(addr));
-
-    counter pc(
-        .data(ir_addr),
-        .load(load_pc),
-        .enable(inc_pc),
-        .clk(clk),
-        .rst_(rst_),
-        .count(pc_addr));
-
-    mem mem1(
-        .clk(~cntrl_clk),
-        .read(mem_rd),
-        .write(mem_wr),
-        .addr(addr),
-        .data_in(alu_out),
-        .data_out(data_out));
-
-    alu alu1(
-        .accum(accum_out),
-        .data(data_out),
-        .opcode(opcode),
-        .clk(alu_clk),
-        .out(alu_out),
-        .zero(zero));
-
-    control cntl(
-        .opcode(opcode),
-        .zero(zero),
-        .clk(cntrl_clk),
-        .rst_(rst_),
-        .mem_rd(mem_rd),
-        .load_ir(load_ir),
-        .halt(halt),
-        .inc_pc(inc_pc),
-        .load_ac(load_ac),
-        .load_pc(load_pc),
-        .mem_wr(mem_wr));
-
-endmodule
