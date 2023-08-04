@@ -7,8 +7,7 @@ This project was developed based on the labs from a SV Cadence certification. Th
 
 ## Module Specifications:
 
-### VeriRISC CPU Module:
-<>
+### VeriRISC CPU Module
 #### Building modules:
 - register.sv
 - alu.sv
