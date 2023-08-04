@@ -149,7 +149,7 @@ endmodule
 module mem (
     input        clk,
     input        read,
-    input        write, 
+    input        write,
     input  logic [4:0] addr  ,
     input  logic [7:0] data_in  ,
     output logic [7:0] data_out
@@ -192,7 +192,7 @@ module alu (
     input logic  clk,
     output logic  [0:7] out,
     output logic  zero
-); 
+);
 
 
 always_comb begin
@@ -201,15 +201,15 @@ end
 
 always_ff @(negedge clk) begin
     unique case(opcode)
-        HLT : out = accum;
-        SKZ : out = accum;
-        ADD : out = data + accum;
-        AND : out = data & accum;
-        XOR : out = data ^ accum;
-        LDA : out = data;
-        STO : out = accum;
-        JMP : out = accum;
-        default : out = 'x;
+        HLT : out <= accum;
+        SKZ : out <= accum;
+        ADD : out <= data + accum;
+        AND : out <= data & accum;
+        XOR : out <= data ^ accum;
+        LDA : out <= data;
+        STO : out <= accum;
+        JMP : out <= accum;
+        default : out <= 'x;
     endcase
 end
 endmodule

@@ -9,7 +9,7 @@ parameter int MAX_EXEC_TIME_NS = 500;
 //////////////////////////////////////////////////////////////////////////////////
 // In the interface the variables are declared as datatypes only, and
 // in clocking block and modport we define skew and directions respectively.
-interface ura_if #(DEPTH = 16, DATA_WIDTH = 32) ();
+interface ura_if #(int DEPTH = 16, int DATA_WIDTH = 32) ();
 	logic clk;
 	logic rst;
 	logic [DEPTH-1:0] read_addr;
@@ -65,7 +65,7 @@ endinterface
 //////////////////////////////////////////////////////////////////////////////////
 // TRANSACTION_ITEM
 //////////////////////////////////////////////////////////////////////////////////
-class transaction_item #(DEPTH, DATA_WIDTH);
+class transaction_item #(int DEPTH, int DATA_WIDTH);
 	// data properties:
 	rand logic clk;
 	rand logic rst;
