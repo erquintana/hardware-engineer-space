@@ -66,6 +66,7 @@ timeprecision 1ns;
         end
     end
 endmodule
+
 //------------------------------------------------------------------------------
 // Project: Verifying the VeriRISC CPU
 // File:    scale_mux.sv
