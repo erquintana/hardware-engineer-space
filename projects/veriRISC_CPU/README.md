@@ -10,13 +10,13 @@ This project was developed based on the labs from a SV Cadence certification. Th
 ### VeriRISC CPU Module:
 <>
 #### Building modules:
-- [register.sv] (register.sv)
-- [alu.sv] (alu.sv)
-- [control.sv] (control.sv)
-- [mem.sv] (mem.sv)
-- [scale_mux.sv] (scale_mux.sv)
-- [counter.sv] (counter.sv)
-- [typedefs.sv] (typedefs.sv)
+- ![register.sv] (register.sv)
+- ![alu.sv] (alu.sv)
+- ![control.sv] (control.sv)
+- ![mem.sv] (mem.sv)
+- ![scale_mux.sv] (scale_mux.sv)
+- ![counter.sv] (counter.sv)
+- ![typedefs.sv] (typedefs.sv)
 
 
 #### Inputs:
