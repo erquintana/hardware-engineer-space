@@ -170,6 +170,7 @@ always_ff @(posedge clk iff ((read == '1)&&(write == '0)) )
    data_out <= memory[addr];
 
 endmodule
+
 //------------------------------------------------------------------------------
 // Project: Verifying the VeriRISC CPU
 // File:    alu.sv
@@ -210,7 +211,9 @@ always_ff @(negedge clk) begin
         default : out = 'x;
     endcase
 end
-endmodule//------------------------------------------------------------------------------
+endmodule
+
+//------------------------------------------------------------------------------
 // Project: Verifying the VeriRISC CPU
 // File:    control.sv
 // Author:  Esteban Rodríguez Quintana
@@ -342,7 +345,11 @@ module control (
 endmodule
 
 
-//////////////////////////////////////////
+//------------------------------------------------------------------------------
+// Project: Verifying the VeriRISC CPU
+// File:    veriRISC_CPU.sv
+// Author:  Esteban Rodríguez Quintana
+//------------------------------------------------------------------------------
 
 module veriRISC_CPU(
                 output logic halt  ,
