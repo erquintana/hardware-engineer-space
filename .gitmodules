@@ -1,0 +1,6 @@
+[submodule "projects/veriRISC-CPU-SV"]
+	path = projects/veriRISC-CPU-SV
+	url = git@github.com:erquintana/veriRISC-CPU-SV.git
+[submodule "projects/universal-register-SV"]
+	path = projects/universal-register-SV
+	url = git@github.com:erquintana/universal-register-SV.git
