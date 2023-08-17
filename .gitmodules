@@ -4,3 +4,9 @@
 [submodule "projects/universal-register-SV"]
 	path = projects/universal-register-SV
 	url = git@github.com:erquintana/universal-register-SV.git
+[submodule "projects/ALU_Verification_with_UVM"]
+	path = projects/ALU_Verification_with_UVM
+	url = git@github.com:erquintana/ALU_Verification_with_UVM.git
+[submodule "projects/veriRISC_CPU_SV"]
+	path = projects/veriRISC_CPU_SV
+	url = git@github.com:erquintana/veriRISC_CPU_SV.git
